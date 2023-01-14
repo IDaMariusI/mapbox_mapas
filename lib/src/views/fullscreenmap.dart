@@ -10,9 +10,49 @@ class FullScreenMap extends StatefulWidget {
 }
 
 class _FullScreenMapState extends State<FullScreenMap> {
+  String selectedStyle = MapboxStyles.LIGHT;
+  String lightStyle = MapboxStyles.LIGHT;
+  String darkStyle = MapboxStyles.DARK;
+
+  final center = const LatLng(37.810575, -122.477174);
+
   MapboxMapController? mapController;
 
-  var isLight = true;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: crearMapa(),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          FloatingActionButton(
+            child: const Icon(Icons.add_to_home_screen_outlined),
+            onPressed: () {
+              if (selectedStyle == lightStyle) {
+                selectedStyle = darkStyle;
+              } else {
+                selectedStyle = lightStyle;
+              }
+
+              setState(() {});
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  MapboxMap crearMapa() {
+    return MapboxMap(
+      styleString: selectedStyle,
+      onMapCreated: _onMapCreated,
+      onStyleLoadedCallback: _onStyleLoadedCallback,
+      initialCameraPosition: CameraPosition(
+        target: center,
+        zoom: 14,
+      ),
+    );
+  }
 
   _onMapCreated(MapboxMapController controller) {
     mapController = controller;
@@ -24,20 +64,5 @@ class _FullScreenMapState extends State<FullScreenMap> {
       backgroundColor: Theme.of(context).primaryColor,
       duration: const Duration(seconds: 1),
     ));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: MapboxMap(
-        styleString: isLight ? MapboxStyles.LIGHT : MapboxStyles.DARK,
-        onMapCreated: _onMapCreated,
-        onStyleLoadedCallback: _onStyleLoadedCallback,
-        initialCameraPosition: const CameraPosition(
-          target: LatLng(37.810575, -122.477174),
-          zoom: 14,
-        ),
-      ),
-    );
   }
 }
