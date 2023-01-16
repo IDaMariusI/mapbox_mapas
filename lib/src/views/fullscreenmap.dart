@@ -21,28 +21,48 @@ class _FullScreenMapState extends State<FullScreenMap> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: crearMapa(),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
-          FloatingActionButton(
-            child: const Icon(Icons.add_to_home_screen_outlined),
-            onPressed: () {
-              if (selectedStyle == lightStyle) {
-                selectedStyle = darkStyle;
-              } else {
-                selectedStyle = lightStyle;
-              }
-
-              setState(() {});
-            },
-          ),
-        ],
-      ),
+      body: createMap(),
+      floatingActionButton: floatingButtons(),
     );
   }
 
-  MapboxMap crearMapa() {
+  Column floatingButtons() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: <Widget>[
+        //Zoom In
+        FloatingActionButton(
+          child: const Icon(Icons.zoom_in_outlined),
+          onPressed: () {
+            mapController?.animateCamera(CameraUpdate.zoomIn());
+          },
+        ),
+        const SizedBox(height: 5),
+        //Zoom Out
+        FloatingActionButton(
+          child: const Icon(Icons.zoom_out_outlined),
+            onPressed: (){
+              mapController?.animateCamera(CameraUpdate.zoomOut());
+            },
+        ),
+        const SizedBox(height: 5),
+        //Change App Style
+        FloatingActionButton(
+          child: const Icon(Icons.add_to_home_screen_outlined),
+          onPressed: () {
+            if (selectedStyle == lightStyle) {
+              selectedStyle = darkStyle;
+            } else {
+              selectedStyle = lightStyle;
+            }
+            setState(() {});
+          },
+        ),
+      ],
+    );
+  }
+
+  MapboxMap createMap() {
     return MapboxMap(
       styleString: selectedStyle,
       onMapCreated: _onMapCreated,
