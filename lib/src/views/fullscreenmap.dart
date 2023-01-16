@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
+import 'package:http/http.dart' as http;
 import 'package:mapbox_gl/mapbox_gl.dart';
 
 class FullScreenMap extends StatefulWidget {
@@ -36,9 +38,9 @@ class _FullScreenMapState extends State<FullScreenMap> {
           onPressed: () {
             mapController?.addSymbol(SymbolOptions(
               geometry: center,
-              iconImage: 'attraction-15',
+              iconImage: 'assetImage',
               iconSize: 3,
-              textField: 'Montana creade aquí',
+              textField: 'Montana creada aquí',
               textOffset: const Offset(0, 2),
             ));
           },
@@ -69,6 +71,7 @@ class _FullScreenMapState extends State<FullScreenMap> {
             } else {
               selectedStyle = lightStyle;
             }
+            _onStyleLoaded();
             setState(() {});
           },
         ),
@@ -88,15 +91,34 @@ class _FullScreenMapState extends State<FullScreenMap> {
     );
   }
 
-  _onMapCreated(MapboxMapController controller) {
+  void _onMapCreated(MapboxMapController controller) {
     mapController = controller;
+    _onStyleLoaded();
   }
 
-  _onStyleLoadedCallback() {
+  void _onStyleLoadedCallback() {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: const Text("Style loaded :)"),
       backgroundColor: Theme.of(context).primaryColor,
       duration: const Duration(seconds: 1),
     ));
+  }
+
+  void _onStyleLoaded() {
+    addImageFromAsset("assetImage", "assets/custom-icon.png");
+    addImageFromUrl("networkImage", "https://via.placeholder.com/50");
+  }
+
+  //Adds an asset image to the currently displayed style
+  Future<void> addImageFromAsset(String name, String assetName) async {
+    final ByteData bytes = await rootBundle.load(assetName);
+    final Uint8List list = bytes.buffer.asUint8List();
+    return mapController?.addImage(name, list);
+  }
+
+  //Adds a network image to the currently displayed style
+  Future<void> addImageFromUrl(String name, String url) async {
+    var response = await http.get(url as Uri);
+    return mapController?.addImage(name, response.bodyBytes);
   }
 }
