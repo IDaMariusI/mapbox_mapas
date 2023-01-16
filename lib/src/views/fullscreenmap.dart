@@ -30,6 +30,20 @@ class _FullScreenMapState extends State<FullScreenMap> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
+        //Symbols
+        FloatingActionButton(
+          child: const Icon(Icons.emoji_symbols_outlined),
+          onPressed: () {
+            mapController?.addSymbol(SymbolOptions(
+              geometry: center,
+              iconImage: 'attraction-15',
+              iconSize: 3,
+              textField: 'Montana creade aquí',
+              textOffset: const Offset(0, 2),
+            ));
+          },
+        ),
+        const SizedBox(height: 5),
         //Zoom In
         FloatingActionButton(
           child: const Icon(Icons.zoom_in_outlined),
@@ -41,9 +55,9 @@ class _FullScreenMapState extends State<FullScreenMap> {
         //Zoom Out
         FloatingActionButton(
           child: const Icon(Icons.zoom_out_outlined),
-            onPressed: (){
-              mapController?.animateCamera(CameraUpdate.zoomOut());
-            },
+          onPressed: () {
+            mapController?.animateCamera(CameraUpdate.zoomOut());
+          },
         ),
         const SizedBox(height: 5),
         //Change App Style
